@@ -13,11 +13,11 @@ func NewService(le *logrus.Entry) Service {
 }
 
 func (svc service) PublishBeerEventCreatedV1(event *BeerCreatedV1) error {
-	svc.logger.Info("message: %v", event)
+	svc.logger.Infof("message: %v", event)
 	return nil
 }
 
 func (svc service) PublishReviewCreatedV1(event *ReviewCreatedV1) error {
-	svc.logger.Info("message: %v", event)
+	svc.logger.Infof("message: %v", event)
 	return nil
 }
