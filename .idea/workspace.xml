@@ -173,6 +173,17 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="TestHistory">
+    <history-entry file="go_test_github_com_avasapollo_beers-api_beers - 2018.09.20 at 11h 17m 51s.xml">
+      <configuration name="go test github.com/avasapollo/beers-api/beers" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="go_test_github_com_avasapollo_beers-api_beers - 2018.09.20 at 11h 19m 23s.xml">
+      <configuration name="go test github.com/avasapollo/beers-api/beers" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="go_test_github_com_avasapollo_beers-api_beers - 2018.09.20 at 11h 19m 37s.xml">
+      <configuration name="go test github.com/avasapollo/beers-api/beers" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+  </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1039" extended-state="6" />
     <editor active="true" />
