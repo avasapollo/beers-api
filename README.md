@@ -1,7 +1,12 @@
 # beers-api
 
+<p align="center">
+  <img width="460" height="300" src="https://user-images.githubusercontent.com/22316360/45831785-2694d700-bcf8-11e8-9490-25b7c82e2621.png">
+</p>
+
+
 This is an example of Microservice application structure in Golang.
-To run the application in docker container
+To run the application in a docker container you have to run these commands:
 
 ```
 make all
@@ -45,5 +50,4 @@ Get a specific beer from the memory storage
 
 ### GET /v1/beers/{beer_id}/reviews
 Get the reviews about a specific beer from the memory storage
-
 
