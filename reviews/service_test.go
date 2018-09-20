@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/avasapollo/beers-api/eventhub"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
@@ -26,10 +27,12 @@ func TestService_AddReview(t *testing.T) {
 
 	db := NewMockDatabase(ctrl)
 	db.EXPECT().AddReview(gomock.Any()).Return(nil)
+	broker := eventhub.NewMockService(ctrl)
+	broker.EXPECT().PublishReviewCreatedV1(gomock.Any()).Return(nil)
 
 	beerID := uuid.New().String()
 
-	svc := NewService(le, db)
+	svc := NewService(le, db, broker)
 	err := svc.AddReview(&Review{
 		BeerID:      beerID,
 		Author:      "andrea",
@@ -54,7 +57,9 @@ func TestService_GetReview(t *testing.T) {
 		CreatedAt:   time.Now(),
 	}, nil)
 
-	svc := NewService(le, db)
+	broker := eventhub.NewMockService(ctrl)
+
+	svc := NewService(le, db, broker)
 	review, err := svc.GetReview(reviewID)
 
 	assert.Nil(t, err)
