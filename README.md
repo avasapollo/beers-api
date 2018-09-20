@@ -36,7 +36,7 @@ Body of the request
 
 ```
 {
-    "name" : "Andrea",
+    "author" : "Andrea",
     "description": "This beer is amazing"
 }
 
