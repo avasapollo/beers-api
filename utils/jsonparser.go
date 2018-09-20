@@ -6,15 +6,12 @@ import (
 )
 
 func ParseJsonBodyRequest(r *http.Request, target interface{}) error {
-	var body []byte
-	_, err := r.Body.Read(body)
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&target)
 	if err != nil {
 		return err
 	}
 	defer r.Body.Close()
-	if err := json.Unmarshal(body, target); err != nil {
-		return err
-	}
 
 	return nil
 }
