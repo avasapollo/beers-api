@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/avasapollo/beers-api/eventhub"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
@@ -27,7 +28,10 @@ func TestService_AddBeer(t *testing.T) {
 	db := NewMockDatabase(ctrl)
 	db.EXPECT().AddBeer(gomock.Any()).Return(nil)
 
-	svc := NewService(le, db)
+	brokerSvc := eventhub.NewMockService(ctrl)
+	brokerSvc.EXPECT().PublishBeerEventCreatedV1(gomock.Any()).Return(nil).AnyTimes()
+
+	svc := NewService(le, db, brokerSvc)
 	err := svc.AddBeer(&Beer{
 		Name:  "moretti",
 		Brand: "moretti group",
@@ -41,8 +45,10 @@ func TestService_AddBeers(t *testing.T) {
 
 	db := NewMockDatabase(ctrl)
 	db.EXPECT().AddBeers(gomock.Any()).Return(nil)
+	brokerSvc := eventhub.NewMockService(ctrl)
+	brokerSvc.EXPECT().PublishBeerEventCreatedV1(gomock.Any()).Return(nil).AnyTimes()
 
-	svc := NewService(le, db)
+	svc := NewService(le, db, brokerSvc)
 	err := svc.AddBeers([]*Beer{
 		{
 			Name:  "moretti",
@@ -69,7 +75,9 @@ func TestService_GetBeer(t *testing.T) {
 		Brand: "moretti group",
 	}, nil)
 
-	svc := NewService(le, db)
+	brokerSvc := eventhub.NewMockService(ctrl)
+
+	svc := NewService(le, db, brokerSvc)
 	beer, err := svc.GetBeer(beerID)
 	assert.Nil(t, err)
 	assert.Equal(t, beerID, beer.ID)
@@ -96,7 +104,9 @@ func TestService_GetBeers(t *testing.T) {
 		},
 	}, nil)
 
-	svc := NewService(le, db)
+	brokerSvc := eventhub.NewMockService(ctrl)
+
+	svc := NewService(le, db, brokerSvc)
 	beers, err := svc.GetBeers(beerID, beerID2)
 	assert.Nil(t, err)
 	assert.Equal(t, beerID, beers[0].ID)
@@ -124,7 +134,9 @@ func TestService_GetAllBeers(t *testing.T) {
 		},
 	}, nil)
 
-	svc := NewService(le, db)
+	brokerSvc := eventhub.NewMockService(ctrl)
+
+	svc := NewService(le, db, brokerSvc)
 	beers, err := svc.GetAllBeers()
 	assert.Nil(t, err)
 	assert.Equal(t, beerID, beers[0].ID)
