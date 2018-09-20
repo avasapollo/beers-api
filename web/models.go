@@ -30,11 +30,23 @@ func (b ReviewRequest) Validate() error {
 	}
 
 	if b.Author == "" {
-		return fmt.Errorf("authour is empty")
+		return fmt.Errorf("author is empty")
 	}
 
 	if b.Description == "" {
 		return fmt.Errorf("description is empty")
 	}
 	return nil
+}
+
+type OkResponse struct {
+	Status  string      `json:"status"`
+	Payload interface{} `json:"payload"`
+}
+
+func NewOkResponse(payload interface{}) *OkResponse {
+	return &OkResponse{
+		Status:  "ok",
+		Payload: payload,
+	}
 }
