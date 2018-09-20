@@ -6,6 +6,8 @@
 
 
 This is an example of Microservice application structure in Golang.
+The dependencies will be installed from `dep`, so you need dep to use the Makefile.
+You can find more info about dep here https://github.com/golang/dep .
 To run the application in a docker container you have to run these commands:
 
 ```
@@ -14,7 +16,10 @@ docker build -t beers-api .
 docker run -d -p 8000:8000 --name beers-api beers-api
 ```
 
-This application is created to show a possible structure of a Microservice with Golang, it doesn't contains all the CRUD operations.
+## REST Api
+This application is created just to show a possible structure of a Microservice with Golang.
+It doesn't contains all the CRUD operations.
+The server is in listening on port 8000 so `http://localhost:8000`
 
 The possible endpoint are:
 
@@ -50,4 +55,7 @@ Get a specific beer from the memory storage
 
 ### GET /v1/beers/{beer_id}/reviews
 Get the reviews about a specific beer from the memory storage
+
+## Broker
+When you will create a beer or a review, the service will publish a message on the broker.
 
