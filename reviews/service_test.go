@@ -28,7 +28,6 @@ func TestService_AddReview(t *testing.T) {
 	db := NewMockDatabase(ctrl)
 	db.EXPECT().AddReview(gomock.Any()).Return(nil)
 	broker := eventhub.NewMockService(ctrl)
-	broker.EXPECT().PublishReviewCreatedV1(gomock.Any()).Return(nil)
 
 	beerID := uuid.New().String()
 
@@ -94,7 +93,9 @@ func TestService_GetAllReviewsByBeerID(t *testing.T) {
 		},
 	}, nil)
 
-	svc := NewService(le, db)
+	broker := eventhub.NewMockService(ctrl)
+
+	svc := NewService(le, db, broker)
 	reviews, err := svc.GetAllReviewsByBeerID(beerID)
 
 	assert.Nil(t, err)
