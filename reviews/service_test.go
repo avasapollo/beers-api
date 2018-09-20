@@ -28,6 +28,7 @@ func TestService_AddReview(t *testing.T) {
 	db := NewMockDatabase(ctrl)
 	db.EXPECT().AddReview(gomock.Any()).Return(nil)
 	broker := eventhub.NewMockService(ctrl)
+	broker.EXPECT().PublishReviewCreatedV1(gomock.Any()).Return(nil).AnyTimes()
 
 	beerID := uuid.New().String()
 
