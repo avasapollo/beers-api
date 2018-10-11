@@ -19,25 +19,33 @@ type ApiRest struct {
 }
 
 func NewRestApi(le *logrus.Entry, beersSvc beers.Service, reviewsSvc reviews.Service) *ApiRest {
-	return &ApiRest{
+	api := &ApiRest{
 		logger:  le,
 		router:  mux.NewRouter(),
 		beers:   beersSvc,
 		reviews: reviewsSvc,
 	}
+	api.AddHandles()
+	return api
+}
+
+func (api *ApiRest) AddHandles() {
+	api.router.HandleFunc("/v1/beers", api.GetAllBeers).Methods(http.MethodGet)
+	api.router.HandleFunc("/v1/beers/{id}", api.GetBeer).Methods(http.MethodGet)
+	api.router.HandleFunc("/v1/beers/{id}/reviews", api.GetBeerReviews).Methods(http.MethodGet)
+	api.router.HandleFunc("/v1/beers", api.AddBeer).Methods(http.MethodPost)
+	api.router.HandleFunc("/v1/beers/{id}/reviews", api.AddBeerReview).Methods(http.MethodPost)
+}
+
+func (api ApiRest) GetMuxRouter() *mux.Router {
+	return api.router
 }
 
 func (api ApiRest) ListenServe() {
-	api.router.HandleFunc("/v1/beers", api.getAllBeers).Methods(http.MethodGet)
-	api.router.HandleFunc("/v1/beers/{id}", api.getBeer).Methods(http.MethodGet)
-	api.router.HandleFunc("/v1/beers/{id}/reviews", api.getBeerReviews).Methods(http.MethodGet)
-	api.router.HandleFunc("/v1/beers", api.addBeer).Methods(http.MethodPost)
-	api.router.HandleFunc("/v1/beers/{id}/reviews", api.addBeerReview).Methods(http.MethodPost)
-
 	log.Fatal(http.ListenAndServe(":8000", api.router))
 }
 
-func (api ApiRest) addBeer(w http.ResponseWriter, r *http.Request) {
+func (api ApiRest) AddBeer(w http.ResponseWriter, r *http.Request) {
 	request := new(BeerRequest)
 
 	// parse body of the request
@@ -54,7 +62,7 @@ func (api ApiRest) addBeer(w http.ResponseWriter, r *http.Request) {
 
 	beer := &beers.Beer{
 		Name:  request.Name,
-		Brand: request.Name,
+		Brand: request.Brand,
 	}
 	if err := api.beers.AddBeer(beer); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, "something wrong")
@@ -64,7 +72,7 @@ func (api ApiRest) addBeer(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, NewOkResponse(beer))
 }
 
-func (api ApiRest) addBeerReview(w http.ResponseWriter, r *http.Request) {
+func (api ApiRest) AddBeerReview(w http.ResponseWriter, r *http.Request) {
 	request := new(ReviewRequest)
 
 	// parse body of the request
@@ -92,7 +100,7 @@ func (api ApiRest) addBeerReview(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, NewOkResponse(review))
 }
 
-func (api ApiRest) getAllBeers(w http.ResponseWriter, r *http.Request) {
+func (api ApiRest) GetAllBeers(w http.ResponseWriter, r *http.Request) {
 	result, err := api.beers.GetAllBeers()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -102,7 +110,7 @@ func (api ApiRest) getAllBeers(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusOK, NewOkResponse(result))
 }
 
-func (api ApiRest) getBeer(w http.ResponseWriter, r *http.Request) {
+func (api ApiRest) GetBeer(w http.ResponseWriter, r *http.Request) {
 	beerID := mux.Vars(r)["id"]
 
 	beer, err := api.beers.GetBeer(beerID)
@@ -113,7 +121,7 @@ func (api ApiRest) getBeer(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusOK, NewOkResponse(beer))
 }
 
-func (api ApiRest) getBeerReviews(w http.ResponseWriter, r *http.Request) {
+func (api ApiRest) GetBeerReviews(w http.ResponseWriter, r *http.Request) {
 	beerID := mux.Vars(r)["id"]
 
 	reviews, err := api.reviews.GetAllReviewsByBeerID(beerID)
