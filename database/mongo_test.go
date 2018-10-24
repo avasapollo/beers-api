@@ -10,17 +10,22 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMemoryDB_AddBeer(t *testing.T) {
-	err := memDB.AddBeer(&beers.Beer{
+func TestMongoDB_AddBeer(t *testing.T) {
+	checkMongoDBTest(t)
+
+	err := mongoDB.AddBeer(&beers.Beer{
 		ID:    beerIDTest,
 		Name:  "poretti",
 		Brand: "poretti group",
 	})
 	assert.Nil(t, err)
+
 }
 
-func TestMemoryDB_AddBeers(t *testing.T) {
-	err := memDB.AddBeers([]*beers.Beer{
+func TestMongoDB_AddBeers(t *testing.T) {
+	checkMongoDBTest(t)
+
+	err := mongoDB.AddBeers([]*beers.Beer{
 		{
 			ID:    uuid.New().String(),
 			Name:  "estrella",
@@ -35,8 +40,10 @@ func TestMemoryDB_AddBeers(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestMemoryDB_GetAllBeers(t *testing.T) {
-	beers, err := memDB.GetAllBeers()
+func TestMongoDB_GetAllBeers(t *testing.T) {
+	checkMongoDBTest(t)
+
+	beers, err := mongoDB.GetAllBeers()
 	assert.Nil(t, err)
 	assert.NotNil(t, beers)
 
@@ -46,21 +53,27 @@ func TestMemoryDB_GetAllBeers(t *testing.T) {
 	}
 }
 
-func TestMemoryDB_GetBeer(t *testing.T) {
-	beer, err := memDB.GetBeer(beerIDTest)
+func TestMongoDB_GetBeer(t *testing.T) {
+	checkMongoDBTest(t)
+
+	beer, err := mongoDB.GetBeer(beerIDTest)
 	assert.Nil(t, err)
 	assert.NotNil(t, beer)
 }
 
-func TestMemoryDB_GetBeers(t *testing.T) {
-	beers, err := memDB.GetBeers(beerIDTest)
+func TestMongoDB_GetBeers(t *testing.T) {
+	checkMongoDBTest(t)
+
+	beers, err := mongoDB.GetBeers(beerIDTest)
 	assert.Nil(t, err)
 	assert.NotNil(t, beers)
 	assert.Equal(t, beerIDTest, beers[0].ID)
 }
 
-func TestMemoryDB_AddReview(t *testing.T) {
-	err := memDB.AddReview(&reviews.Review{
+func TestMongoDB_AddReview(t *testing.T) {
+	checkMongoDBTest(t)
+
+	err := mongoDB.AddReview(&reviews.Review{
 		ID:          reviewIDTest,
 		BeerID:      "0cc9b2a0-6ced-44dd-ac08-6b6a1d5646fd",
 		Author:      "bomber",
@@ -70,18 +83,29 @@ func TestMemoryDB_AddReview(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestMemoryDB_GetReview(t *testing.T) {
-	review, err := memDB.GetReview(reviewIDTest)
+func TestMongoDB_GetReview(t *testing.T) {
+	checkMongoDBTest(t)
+
+	review, err := mongoDB.GetReview(reviewIDTest)
 	assert.Nil(t, err)
 	assert.NotNil(t, review)
 }
 
-func TestMemoryDB_GetAllReviewsByBeerID(t *testing.T) {
-	err := memDB.AddReview(&reviews.Review{
+func TestMongoDB_GetAllReviewsByBeerID(t *testing.T) {
+	checkMongoDBTest(t)
+
+	err := mongoDB.AddReview(&reviews.Review{
+		ID:          uuid.New().String(),
 		BeerID:      beerIDTest,
 		Author:      "bomber",
 		Description: "very good",
 		CreatedAt:   time.Now(),
 	})
 	assert.Nil(t, err)
+}
+
+func checkMongoDBTest(t *testing.T) {
+	if !mongoConfigured {
+		t.Skip("mongo url is not configured")
+	}
 }
