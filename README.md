@@ -11,6 +11,10 @@ You need `dep` to use the Makefile. You can find more info about dep here https:
 
 To run the application in a docker container you have to choose:
 
+## Database
+The are 2 database implementations: `memory-db` and `mongo-db` you can find both in the database package
+The application will decide to use `Mongo Database` if it will find the env `MONGO_URI`
+
 ### Memory Database
 You can run the application with memory database implementation with this commands:
 
@@ -27,10 +31,6 @@ make all
 docker-compose up
 ```
 `docker-compose` will link the application beer-api container with the container with `mongo-db`.
-
-## Database
-The are 2 database implementation: `memory-db` and `mongo-db` you can find both in the database package
-The application will decide to use `Mongo Database` if it will find the env `MONGO_URI`
 
 ## REST Api
 This application is created just to show a possible structure of a Microservice with Golang.
