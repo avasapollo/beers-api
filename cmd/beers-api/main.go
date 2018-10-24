@@ -14,7 +14,7 @@ func main() {
 	le := logrus.New().WithField("app", "beers-api")
 
 	// database
-	db := database.NewMemoryDB(le, database.GetInitBeers(), database.GetInitReviews())
+	db := database.NewMemoryDB(le)
 	brokerSvc := eventhub.NewService(le)
 
 	// services
