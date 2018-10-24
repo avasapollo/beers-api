@@ -8,6 +8,7 @@ import (
 type AppConfig struct {
 	AppName string `envconfig:"APP_NAME" default:"beers-api"`
 	Env     string `envconfig:"ENV" default:"dev"`
+	Port    int    `envconfig:"PORT" default:"8080""`
 	*database.MongoConfig
 }
 

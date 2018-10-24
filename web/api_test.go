@@ -93,12 +93,12 @@ func TestApiRest_GetBeer(t *testing.T) {
 	resp := executeRequest(apiSvc.GetMuxRouter(), req)
 	assert.Equal(t, http.StatusOK, resp.Result().StatusCode)
 
-	okResp := new(OkResponse)
+	okResp := new(beers.Beer)
 	json.NewDecoder(resp.Body).Decode(okResp)
 
-	assert.Equal(t, "beer-id-1", okResp.Payload.(map[string]interface{})["id"])
-	assert.Equal(t, "poretti", okResp.Payload.(map[string]interface{})["name"])
-	assert.Equal(t, "poretti-group", okResp.Payload.(map[string]interface{})["brand"])
+	assert.Equal(t, "beer-id-1", okResp.ID)
+	assert.Equal(t, "poretti", okResp.Name)
+	assert.Equal(t, "poretti-group", okResp.Brand)
 }
 
 func TestApiRest_GetBeerReviews(t *testing.T) {
@@ -123,12 +123,12 @@ func TestApiRest_GetBeerReviews(t *testing.T) {
 	resp := executeRequest(apiSvc.GetMuxRouter(), req)
 	assert.Equal(t, http.StatusOK, resp.Result().StatusCode)
 
-	okResp := new(OkResponse)
+	okResp := new(OkResponseMultiple)
 	json.NewDecoder(resp.Body).Decode(okResp)
-	assert.Equal(t, "review-id-1", okResp.Payload.([]interface{})[0].(map[string]interface{})["id"])
-	assert.Equal(t, "beer-id-1", okResp.Payload.([]interface{})[0].(map[string]interface{})["beer_id"])
-	assert.Equal(t, "author", okResp.Payload.([]interface{})[0].(map[string]interface{})["author"])
-	assert.Equal(t, "description", okResp.Payload.([]interface{})[0].(map[string]interface{})["description"])
+	assert.Equal(t, "review-id-1", okResp.Results.([]interface{})[0].(map[string]interface{})["id"])
+	assert.Equal(t, "beer-id-1", okResp.Results.([]interface{})[0].(map[string]interface{})["beer_id"])
+	assert.Equal(t, "author", okResp.Results.([]interface{})[0].(map[string]interface{})["author"])
+	assert.Equal(t, "description", okResp.Results.([]interface{})[0].(map[string]interface{})["description"])
 }
 
 func executeRequest(muxRouter *mux.Router, req *http.Request) *httptest.ResponseRecorder {
