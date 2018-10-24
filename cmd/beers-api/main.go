@@ -38,6 +38,11 @@ func main() {
 		le.Info("mongo database is configured")
 	}
 
+	le.WithFields(logrus.Fields{
+		"app_name": config.AppName,
+		"env":      config.Env,
+		"api_port": config.Port,
+	}).Info("application starting...")
 	// broker
 	brokerSvc := eventhub.NewService(le)
 
@@ -45,5 +50,5 @@ func main() {
 	beersSvc := beers.NewService(le, db, brokerSvc)
 	reviewsSvc := reviews.NewService(le, db, brokerSvc)
 
-	web.NewRestApi(le, beersSvc, reviewsSvc).ListenServe()
+	web.NewRestApi(le, beersSvc, reviewsSvc).ListenServe(config.Port)
 }

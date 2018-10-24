@@ -39,14 +39,12 @@ func (b ReviewRequest) Validate() error {
 	return nil
 }
 
-type OkResponse struct {
-	Status  string      `json:"status"`
-	Payload interface{} `json:"payload"`
+type OkResponseMultiple struct {
+	Results interface{} `json:"results"`
 }
 
-func NewOkResponse(payload interface{}) *OkResponse {
-	return &OkResponse{
-		Status:  "ok",
-		Payload: payload,
+func NewOkMultipleResponse(payload interface{}) *OkResponseMultiple {
+	return &OkResponseMultiple{
+		Results: payload,
 	}
 }

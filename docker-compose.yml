@@ -1,0 +1,19 @@
+version: "2"
+services:
+  app:
+    container_name: beers-api
+    restart: always
+    build: .
+    ports:
+      - "8080:8080"
+    links:
+      - mongo
+    environment:
+      - MONGO_URL=mongodb://mongo:27017
+      - ENV=dev
+      - PORT=8080
+  mongo:
+    container_name: mongo
+    image: mongo
+    ports:
+      - "27017:27017"

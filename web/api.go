@@ -1,6 +1,7 @@
 package web
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -30,6 +31,7 @@ func NewRestApi(le *logrus.Entry, beersSvc beers.Service, reviewsSvc reviews.Ser
 }
 
 func (api *ApiRest) AddHandles() {
+	api.router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {}).Methods(http.MethodGet)
 	api.router.HandleFunc("/v1/beers", api.GetAllBeers).Methods(http.MethodGet)
 	api.router.HandleFunc("/v1/beers/{id}", api.GetBeer).Methods(http.MethodGet)
 	api.router.HandleFunc("/v1/beers/{id}/reviews", api.GetBeerReviews).Methods(http.MethodGet)
@@ -41,8 +43,8 @@ func (api ApiRest) GetMuxRouter() *mux.Router {
 	return api.router
 }
 
-func (api ApiRest) ListenServe() {
-	log.Fatal(http.ListenAndServe(":8000", api.router))
+func (api ApiRest) ListenServe(port int) {
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), api.router))
 }
 
 func (api ApiRest) AddBeer(w http.ResponseWriter, r *http.Request) {
@@ -69,7 +71,7 @@ func (api ApiRest) AddBeer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.RespondWithJSON(w, http.StatusCreated, NewOkResponse(beer))
+	utils.RespondWithJSON(w, http.StatusCreated, beer)
 }
 
 func (api ApiRest) AddBeerReview(w http.ResponseWriter, r *http.Request) {
@@ -97,7 +99,7 @@ func (api ApiRest) AddBeerReview(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, http.StatusInternalServerError, "something wrong")
 		return
 	}
-	utils.RespondWithJSON(w, http.StatusCreated, NewOkResponse(review))
+	utils.RespondWithJSON(w, http.StatusCreated, review)
 }
 
 func (api ApiRest) GetAllBeers(w http.ResponseWriter, r *http.Request) {
@@ -107,7 +109,7 @@ func (api ApiRest) GetAllBeers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.RespondWithJSON(w, http.StatusOK, NewOkResponse(result))
+	utils.RespondWithJSON(w, http.StatusOK, NewOkMultipleResponse(result))
 }
 
 func (api ApiRest) GetBeer(w http.ResponseWriter, r *http.Request) {
@@ -118,7 +120,7 @@ func (api ApiRest) GetBeer(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}
-	utils.RespondWithJSON(w, http.StatusOK, NewOkResponse(beer))
+	utils.RespondWithJSON(w, http.StatusOK, beer)
 }
 
 func (api ApiRest) GetBeerReviews(w http.ResponseWriter, r *http.Request) {
@@ -129,5 +131,5 @@ func (api ApiRest) GetBeerReviews(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}
-	utils.RespondWithJSON(w, http.StatusOK, NewOkResponse(reviews))
+	utils.RespondWithJSON(w, http.StatusOK, NewOkMultipleResponse(reviews))
 }
