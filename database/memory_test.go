@@ -22,9 +22,7 @@ var (
 func TestMain(m *testing.M) {
 	le = logrus.WithField("app", "testing")
 	db = NewMemoryDB(
-		le,
-		GetInitBeers(),
-		GetInitReviews())
+		le)
 	os.Exit(m.Run())
 }
 

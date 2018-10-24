@@ -10,52 +10,79 @@ import (
 
 type memoryDB struct {
 	logger  *logrus.Entry
-	reviews []*reviews.Review
-	beers   []*beers.Beer
+	reviews []*ReviewDto
+	beers   []*BeerDto
 }
 
-func NewMemoryDB(le *logrus.Entry, beers []*beers.Beer,
-	reviews []*reviews.Review) Database {
+func NewMemoryDB(le *logrus.Entry) Database {
 	return &memoryDB{
 		logger:  le,
-		reviews: reviews,
-		beers:   beers,
+		reviews: []*ReviewDto{},
+		beers:   []*BeerDto{},
 	}
 }
 
 func (m *memoryDB) AddBeer(beer *beers.Beer) error {
-	m.beers = append(m.beers, beer)
+	m.beers = append(
+		m.beers,
+		NewBeerDto(beer.ID, beer.Name, beer.Brand))
 	return nil
 }
+
 func (m *memoryDB) AddBeers(beers []*beers.Beer) error {
-	m.beers = append(m.beers, beers...)
+	for _, b := range beers {
+		m.beers = append(
+			m.beers,
+			NewBeerDto(b.ID, b.Name, b.Brand))
+	}
 	return nil
 }
+
 func (m memoryDB) GetBeer(beerID string) (*beers.Beer, error) {
 	for _, b := range m.beers {
 		if b.ID != beerID {
 			continue
 		}
-		return b, nil
+		return &beers.Beer{
+			ID:    b.ID,
+			Name:  b.Name,
+			Brand: b.Brand,
+		}, nil
 	}
 	return nil, fmt.Errorf("not found")
 }
 func (m memoryDB) GetBeers(ids ...string) ([]*beers.Beer, error) {
 	var result []*beers.Beer
-
 	for _, id := range ids {
 		if b, err := m.GetBeer(id); err == nil {
-			result = append(result, b)
+			result = append(result, &beers.Beer{
+				ID:    b.ID,
+				Name:  b.Name,
+				Brand: b.Brand,
+			})
 		}
 	}
 	return result, nil
 }
 func (m memoryDB) GetAllBeers() ([]*beers.Beer, error) {
-	return m.beers, nil
+	var result []*beers.Beer
+	for _, b := range m.beers {
+		result = append(result, &beers.Beer{
+			ID:    b.ID,
+			Name:  b.Name,
+			Brand: b.Brand,
+		})
+	}
+	return result, nil
 }
 
 func (m *memoryDB) AddReview(review *reviews.Review) error {
-	m.reviews = append(m.reviews, review)
+	m.reviews = append(m.reviews, NewReviewDto(
+		review.ID,
+		review.BeerID,
+		review.Author,
+		review.Description,
+		review.CreatedAt))
 	return nil
 }
 
@@ -64,19 +91,30 @@ func (m memoryDB) GetReview(id string) (*reviews.Review, error) {
 		if r.ID != id {
 			continue
 		}
-		return r, nil
+		return &reviews.Review{
+			ID:          r.ID,
+			BeerID:      r.BeerID,
+			Author:      r.Author,
+			Description: r.Description,
+			CreatedAt:   r.CreatedAt,
+		}, nil
 	}
 	return nil, fmt.Errorf("not found")
 }
 
 func (m memoryDB) GetAllReviewsByBeerID(beerID string) ([]*reviews.Review, error) {
 	var result []*reviews.Review
-
 	for _, r := range m.reviews {
 		if r.BeerID != beerID {
 			continue
 		}
-		result = append(result, r)
+		result = append(result, &reviews.Review{
+			ID:          r.ID,
+			BeerID:      r.BeerID,
+			Author:      r.Author,
+			Description: r.Description,
+			CreatedAt:   r.CreatedAt,
+		})
 	}
 	return result, nil
 }
